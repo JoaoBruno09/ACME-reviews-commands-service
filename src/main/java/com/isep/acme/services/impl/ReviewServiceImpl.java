@@ -10,6 +10,7 @@ import com.isep.acme.repositories.UserRepository;
 import com.isep.acme.services.RestService;
 import com.isep.acme.services.ReviewService;
 import com.isep.acme.services.UserService;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +36,9 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Autowired
     RestService restService;
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
     @Override
     public Iterable<Review> getAll() {
