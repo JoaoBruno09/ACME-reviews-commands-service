@@ -1,7 +1,7 @@
 version: '3'
 
 services:
-  reviews_C:
+  reviews_c:
     build: .
     ports:
       - "9009:8080"
