@@ -5,6 +5,7 @@ import com.isep.acme.model.*;
 import com.isep.acme.model.dtos.CreateReviewDTO;
 import com.isep.acme.model.dtos.ReviewDTO;
 import com.isep.acme.model.mappers.ReviewMapper;
+import com.isep.acme.rabbit.RMQConfig;
 import com.isep.acme.repositories.ReviewRepository;
 import com.isep.acme.repositories.UserRepository;
 import com.isep.acme.services.RestService;
@@ -65,6 +66,7 @@ public class ReviewServiceImpl implements ReviewService {
         Review review = new Review(createReviewDTO.getReviewText(), date,/*product.get(), */funfact, user.get());
 
         review = repository.save(review);
+        this.rabbitTemplate.convertAndSend(RMQConfig.EXCHANGE, "", review);
 
         if (review == null) return null;
 

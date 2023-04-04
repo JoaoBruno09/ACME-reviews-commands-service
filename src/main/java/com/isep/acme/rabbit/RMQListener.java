@@ -10,6 +10,6 @@ public class RMQListener {
     @RabbitListener(queues = RMQConfig.RCQUEUE)
     public void listener(Review review){
         System.out.println("Review" + review);
-        System.out.println("Product SKU" + review.getIdReview());
+        System.out.println("Review ID" + review.getIdReview());
     }
 }
