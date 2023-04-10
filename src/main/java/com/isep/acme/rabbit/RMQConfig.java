@@ -1,27 +1,27 @@
 package com.isep.acme.rabbit;
 
+import com.isep.acme.constants.Constants;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
 
 
 @Configuration
 public class RMQConfig {
 
-	public static final String RCQUEUE = "reviews_commands_queue";
-	public static final String EXCHANGE = "fanout_exchange";
-
 	@Bean
-	public Queue queue() {
-		return new Queue(RCQUEUE);
-	}
+	public Queue queue() {return new AnonymousQueue();}
 
 	@Bean
 	public FanoutExchange fanout() {
-		return new FanoutExchange(EXCHANGE);
+		return new FanoutExchange(Constants.EXCHANGE);
 	}
 
 	@Bean
@@ -31,7 +31,11 @@ public class RMQConfig {
 
 	@Bean
 	public Jackson2JsonMessageConverter messageConverter(){
-		return new Jackson2JsonMessageConverter();
+		ObjectMapper objectMapper = new ObjectMapper();
+		objectMapper.registerModule(new JavaTimeModule());
+		objectMapper.registerModule(new Hibernate5Module());
+		objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+		return new Jackson2JsonMessageConverter(objectMapper);
 	}
 
 	@Bean
@@ -40,5 +44,4 @@ public class RMQConfig {
 		template.setMessageConverter(messageConverter());
 		return template;
 	}
-
 }

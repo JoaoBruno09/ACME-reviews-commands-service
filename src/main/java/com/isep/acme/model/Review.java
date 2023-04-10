@@ -2,7 +2,10 @@ package com.isep.acme.model;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
 @Entity
 public class Review {
@@ -10,6 +13,9 @@ public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long idReview;
+
+    @Column(nullable = false)
+    private String RID = "R" + UUID.randomUUID().toString().substring(0,9);
 
     @Version
     private long version;
@@ -20,14 +26,13 @@ public class Review {
     @Column(nullable = false)
     private String reviewText;
 
-    /*
     @ElementCollection
     @Column(nullable = true)
     private List<Vote> upVote;
 
     @ElementCollection
     @Column(nullable = true)
-    private List<Vote> downVote;*/
+    private List<Vote> downVote;
 
     @Column(nullable = true)
     private String report;
@@ -38,10 +43,9 @@ public class Review {
     @Column(nullable = false)
     private String funFact;
 
-    /*
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", nullable = false)
-    private Product product;*/
+    private Product product;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -49,8 +53,9 @@ public class Review {
 
     protected Review(){}
 
-    public Review(final Long idReview, final long version, final String approvalStatus, final String reviewText, final LocalDate publishingDate, final String funFact) {
+    public Review(final Long idReview, final String rID, final long version, final String approvalStatus, final String reviewText, final LocalDate publishingDate, final String funFact) {
         this.idReview = Objects.requireNonNull(idReview);
+        this.RID = Objects.requireNonNull(rID);
         this.version = Objects.requireNonNull(version);
         setApprovalStatus(approvalStatus);
         setReviewText(reviewText);
@@ -58,30 +63,33 @@ public class Review {
         setFunFact(funFact);
     }
 
-    public Review(final Long idReview, final long version, final String approvalStatus, final  String reviewText, /*final List<Vote> upVote, final List<Vote> downVote,*/ final String report, final LocalDate publishingDate, final String funFact, /*Product product,*/ User user) {
-        this(idReview, version, approvalStatus, reviewText, publishingDate, funFact);
-
-        //setUpVote(upVote);
-        //setDownVote(downVote);
+    public Review(final Long idReview, final String rID, final long version, final String approvalStatus, final  String reviewText, final List<Vote> upVote, final List<Vote> downVote, final String report, final LocalDate publishingDate, final String funFact, Product product, User user) {
+        this(idReview, rID, version, approvalStatus, reviewText, publishingDate, funFact);
+        setUpVote(upVote);
+        setDownVote(downVote);
         setReport(report);
-        //setProduct(product);
+        setProduct(product);
         setUser(user);
 
     }
 
-    public Review(final String reviewText, LocalDate publishingDate, /*Product product, */String funFact, User user) {
+    public Review(final String reviewText, LocalDate publishingDate, Product product, String funFact, User user) {
         setReviewText(reviewText);
-        //setProduct(product);
+        setProduct(product);
         setPublishingDate(publishingDate);
         setApprovalStatus("pending");
         setFunFact(funFact);
         setUser(user);
-        //this.upVote = new ArrayList<>();
-        //this.downVote = new ArrayList<>();
+        this.upVote = new ArrayList<>();
+        this.downVote = new ArrayList<>();
     }
 
     public Long getIdReview() {
         return idReview;
+    }
+
+    public String getRID() {
+        return RID;
     }
 
     public String getApprovalStatus() {
@@ -142,15 +150,13 @@ public class Review {
         this.funFact = funFact;
     }
 
-    /*
     public void setProduct(Product product) {
         this.product = product;
-    }*/
+    }
 
-    /*
     public Product getProduct() {
         return product;
-    }*/
+    }
 
     public User getUser() {
         return user;
@@ -159,8 +165,6 @@ public class Review {
     public void setUser(User user) {
         this.user = user;
     }
-
-    /*
 
     public List<Vote> getUpVote() {
         return upVote;
@@ -200,5 +204,5 @@ public class Review {
             return true;
         }
         return false;
-    }*/
+    }
 }
