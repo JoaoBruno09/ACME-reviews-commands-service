@@ -33,9 +33,9 @@ class ReviewController {
 
     @Operation(summary = "deletes review")
     @DeleteMapping("/reviews/{reviewID}")
-    public ResponseEntity<Boolean> deleteReview(@PathVariable(value = "reviewID") final Long reviewID) {
+    public ResponseEntity<Boolean> deleteReview(@PathVariable(value = "reviewID") final String rId) {
 
-        Boolean rev = rService.DeleteReview(reviewID);
+        Boolean rev = rService.DeleteReview(rId);
 
         if (rev == null) return ResponseEntity.notFound().build();
 
@@ -46,10 +46,10 @@ class ReviewController {
 
     @Operation(summary = "Accept or reject review")
     @PutMapping("/reviews/acceptreject/{reviewID}")
-    public ResponseEntity<ReviewDTO> putAcceptRejectReview(@PathVariable(value = "reviewID") final Long reviewID, @RequestBody String approved){
+    public ResponseEntity<ReviewDTO> putAcceptRejectReview(@PathVariable(value = "reviewID") final String rId, @RequestBody String approved){
 
         try {
-            ReviewDTO rev = rService.moderateReview(reviewID, approved);
+            ReviewDTO rev = rService.moderateReview(rId, approved);
 
             return ResponseEntity.ok().body(rev);
         }

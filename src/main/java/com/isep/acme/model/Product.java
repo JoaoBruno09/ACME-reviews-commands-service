@@ -1,11 +1,13 @@
 package com.isep.acme.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.isep.acme.model.dtos.ProductDTO;
 
 import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Product {
 
 

@@ -1,5 +1,7 @@
 package com.isep.acme.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -8,6 +10,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Review {
 
     @Id
@@ -15,7 +18,7 @@ public class Review {
     private Long idReview;
 
     @Column(nullable = false)
-    private String RID = "R" + UUID.randomUUID().toString().substring(0,9);
+    private String RID;
 
     @Version
     private long version;
@@ -53,18 +56,18 @@ public class Review {
 
     protected Review(){}
 
-    public Review(final Long idReview, final String rID, final long version, final String approvalStatus, final String reviewText, final LocalDate publishingDate, final String funFact) {
+    public Review(final Long idReview, final String RID, final long version, final String approvalStatus, final String reviewText, final LocalDate publishingDate, final String funFact) {
         this.idReview = Objects.requireNonNull(idReview);
-        this.RID = Objects.requireNonNull(rID);
         this.version = Objects.requireNonNull(version);
+        setRID("R" + UUID.randomUUID().toString().substring(0,8));
         setApprovalStatus(approvalStatus);
         setReviewText(reviewText);
         setPublishingDate(publishingDate);
         setFunFact(funFact);
     }
 
-    public Review(final Long idReview, final String rID, final long version, final String approvalStatus, final  String reviewText, final List<Vote> upVote, final List<Vote> downVote, final String report, final LocalDate publishingDate, final String funFact, Product product, User user) {
-        this(idReview, rID, version, approvalStatus, reviewText, publishingDate, funFact);
+    public Review(final Long idReview, final String RID, final long version, final String approvalStatus, final  String reviewText, final List<Vote> upVote, final List<Vote> downVote, final String report, final LocalDate publishingDate, final String funFact, Product product, User user) {
+        this(idReview, RID, version, approvalStatus, reviewText, publishingDate, funFact);
         setUpVote(upVote);
         setDownVote(downVote);
         setReport(report);
@@ -74,6 +77,7 @@ public class Review {
     }
 
     public Review(final String reviewText, LocalDate publishingDate, Product product, String funFact, User user) {
+        setRID("R" + UUID.randomUUID().toString().substring(0,8));
         setReviewText(reviewText);
         setProduct(product);
         setPublishingDate(publishingDate);
@@ -90,6 +94,10 @@ public class Review {
 
     public String getRID() {
         return RID;
+    }
+
+    public void setRID(String RID) {
+        this.RID = RID;
     }
 
     public String getApprovalStatus() {

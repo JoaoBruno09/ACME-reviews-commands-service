@@ -8,7 +8,7 @@ public interface ReviewService {
 
     ReviewDTO create(CreateReviewDTO createReviewDTO, String sku);
     /*boolean addVoteToReview(Long reviewID, VoteReviewDTO voteReviewDTO);*/
-    Boolean DeleteReview(Long reviewId);
-    ReviewDTO moderateReview(Long reviewID, String approved);
+    Boolean DeleteReview(String rId);
+    ReviewDTO moderateReview(String rId, String approved);
     MessagePostProcessor createMessageProcessor(String header);
 }

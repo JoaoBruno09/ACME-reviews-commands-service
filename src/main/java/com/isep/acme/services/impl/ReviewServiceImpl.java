@@ -52,8 +52,8 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public Boolean DeleteReview(Long reviewId)  {
-        Optional<Review> rev = repository.findById(reviewId);
+    public Boolean DeleteReview(String RID)  {
+        Optional<Review> rev = repository.findByRID(RID);
         if (!rev.isEmpty()){
             Review r = rev.get();
             if (r.getUpVote().isEmpty() && r.getDownVote().isEmpty()) {
@@ -66,8 +66,8 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public ReviewDTO moderateReview(Long reviewID, String approved) throws ResourceNotFoundException, IllegalArgumentException {
-        Optional<Review> r = repository.findById(reviewID);
+    public ReviewDTO moderateReview(String RID, String approved) throws ResourceNotFoundException, IllegalArgumentException {
+        Optional<Review> r = repository.findByRID(RID);
         if(r.isEmpty()){throw new ResourceNotFoundException("Review not found");}
         Boolean ap = r.get().setApprovalStatus(approved);
         if(!ap) {throw new IllegalArgumentException("Invalid status value");}
