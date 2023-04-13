@@ -19,6 +19,17 @@ public class ReviewMapper {
                 review.getUpVote().size());
     }
 
+    public static Review toReview(ReviewDTO reviewDTO){
+        return new Review(
+                reviewDTO.getIdReview(),
+                reviewDTO.getRID(),
+                reviewDTO.getVersion(),
+                reviewDTO.getApprovalStatus(),
+                reviewDTO.getReviewText(),
+                reviewDTO.getPublishingDate(),
+                reviewDTO.getFunFact());
+    }
+
     public static List<ReviewDTO> toDtoList(List<Review> review) {
         List<ReviewDTO> dtoList = new ArrayList<>();
 

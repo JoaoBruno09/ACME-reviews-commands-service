@@ -59,7 +59,7 @@ public class Review {
     public Review(final Long idReview, final String RID, final long version, final String approvalStatus, final String reviewText, final LocalDate publishingDate, final String funFact) {
         this.idReview = Objects.requireNonNull(idReview);
         this.version = Objects.requireNonNull(version);
-        setRID("R" + UUID.randomUUID().toString().substring(0,8));
+        this.RID= Objects.requireNonNull(RID);
         setApprovalStatus(approvalStatus);
         setReviewText(reviewText);
         setPublishingDate(publishingDate);

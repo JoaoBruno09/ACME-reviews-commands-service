@@ -43,9 +43,9 @@ public class ReviewServiceImpl implements ReviewService {
             String funfact = restService.getFunFact(date);
             if (funfact != null){
                 Review review = new Review(createReviewDTO.getReviewText(), date,product.get(), funfact, user.get());
-                Review reviewReturned = repository.save(review);
-                this.rabbitTemplate.convertAndSend(Constants.EXCHANGE, "", reviewReturned, createMessageProcessor(Constants.CREATED_REVIEW_HEADER));
-                return ReviewMapper.toDto(review);
+                ReviewDTO reviewDTO = ReviewMapper.toDto(repository.save(review));
+                this.rabbitTemplate.convertAndSend(Constants.EXCHANGE, "", reviewDTO, createMessageProcessor(Constants.CREATED_REVIEW_HEADER));
+                return reviewDTO;
             }
         }
         return null;
@@ -58,7 +58,7 @@ public class ReviewServiceImpl implements ReviewService {
             Review r = rev.get();
             if (r.getUpVote().isEmpty() && r.getDownVote().isEmpty()) {
                 repository.delete(r);
-                this.rabbitTemplate.convertAndSend(Constants.EXCHANGE, "", r, createMessageProcessor(Constants.DELETED_REVIEW_HEADER));
+                this.rabbitTemplate.convertAndSend(Constants.EXCHANGE, "", ReviewMapper.toDto(repository.save(r)), createMessageProcessor(Constants.DELETED_REVIEW_HEADER));
                 return true;
             }
         }
@@ -71,9 +71,9 @@ public class ReviewServiceImpl implements ReviewService {
         if(r.isEmpty()){throw new ResourceNotFoundException("Review not found");}
         Boolean ap = r.get().setApprovalStatus(approved);
         if(!ap) {throw new IllegalArgumentException("Invalid status value");}
-        Review review = repository.save(r.get());
-        this.rabbitTemplate.convertAndSend(Constants.EXCHANGE, "", review, createMessageProcessor(Constants.MODERATED_REVIEW_HEADER));
-        return ReviewMapper.toDto(review);
+        ReviewDTO reviewDTO = ReviewMapper.toDto(repository.save(r.get()));
+        this.rabbitTemplate.convertAndSend(Constants.EXCHANGE, "", reviewDTO, createMessageProcessor(Constants.MODERATED_REVIEW_HEADER));
+        return reviewDTO;
     }
 
     @Override

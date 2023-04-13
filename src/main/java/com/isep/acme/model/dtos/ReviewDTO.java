@@ -6,6 +6,7 @@ public class ReviewDTO {
 
     private Long idReview;
     private String RID;
+    private long version;
     private String reviewText;
     private LocalDate publishingDate;
     private String approvalStatus;
@@ -36,6 +37,14 @@ public class ReviewDTO {
 
     public void setRID(String RID) {
         this.RID = RID;
+    }
+
+    public long getVersion() {
+        return version;
+    }
+
+    public void setVersion(long version) {
+        this.version = version;
     }
 
     public String getReviewText() {
