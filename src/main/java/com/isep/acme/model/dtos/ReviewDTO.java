@@ -1,5 +1,8 @@
 package com.isep.acme.model.dtos;
 
+import com.isep.acme.model.Product;
+import com.isep.acme.model.User;
+
 import java.time.LocalDate;
 
 public class ReviewDTO {
@@ -12,8 +15,13 @@ public class ReviewDTO {
     private String approvalStatus;
     private String funFact;
     private Integer vote;
+    private String productSku;
+    private Long userId;
 
-    public ReviewDTO(Long idReview, String rId, String reviewText, LocalDate publishingDate, String approvalStatus, String funFact, Integer vote) {
+    public ReviewDTO() {
+    }
+
+    public ReviewDTO(Long idReview, String rId, String reviewText, LocalDate publishingDate, String approvalStatus, Product product, String funFact, User user, Integer vote) {
         this.idReview = idReview;
         this.RID = rId;
         this.reviewText = reviewText;
@@ -21,6 +29,8 @@ public class ReviewDTO {
         this.approvalStatus = approvalStatus;
         this.funFact = funFact;
         this.vote = vote;
+        this.productSku = product.getSku();
+        this.userId = user.getUserId();
     }
 
     public void setIdReview( Long idReview ) {
@@ -79,6 +89,21 @@ public class ReviewDTO {
         this.funFact = funFact;
     }
 
+    public String getProductSku() {
+        return productSku;
+    }
+
+    public void setProductSku(String productSku) {
+        this.productSku = productSku;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
 
     public Integer getVote() {
         return vote;

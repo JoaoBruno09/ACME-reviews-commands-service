@@ -15,7 +15,9 @@ public class ReviewMapper {
                 review.getReviewText(),
                 review.getPublishingDate(),
                 review.getApprovalStatus(),
+                review.getProduct(),
                 review.getFunFact(),
+                review.getUser(),
                 review.getUpVote().size());
     }
 
@@ -27,7 +29,9 @@ public class ReviewMapper {
                 reviewDTO.getApprovalStatus(),
                 reviewDTO.getReviewText(),
                 reviewDTO.getPublishingDate(),
-                reviewDTO.getFunFact());
+                reviewDTO.getProductSku(),
+                reviewDTO.getFunFact(),
+                reviewDTO.getUserId());
     }
 
     public static List<ReviewDTO> toDtoList(List<Review> review) {
