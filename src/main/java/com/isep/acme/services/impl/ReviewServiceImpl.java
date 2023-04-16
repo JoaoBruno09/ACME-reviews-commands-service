@@ -4,8 +4,10 @@ import com.isep.acme.constants.Constants;
 import com.isep.acme.controllers.ResourceNotFoundException;
 import com.isep.acme.model.Product;
 import com.isep.acme.model.Review;
+import com.isep.acme.model.Vote;
 import com.isep.acme.model.dtos.CreateReviewDTO;
 import com.isep.acme.model.dtos.ReviewDTO;
+import com.isep.acme.model.dtos.VoteReviewDTO;
 import com.isep.acme.model.mappers.ReviewMapper;
 import com.isep.acme.repositories.ProductRepository;
 import com.isep.acme.repositories.ReviewRepository;
@@ -17,6 +19,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.Optional;
 
@@ -83,7 +86,8 @@ public class ReviewServiceImpl implements ReviewService {
             return message;
         };
     }
-    /*
+
+    @Transactional
     @Override
     public boolean addVoteToReview(Long reviewID, VoteReviewDTO voteReviewDTO) {
 
@@ -107,5 +111,5 @@ public class ReviewServiceImpl implements ReviewService {
             }
         }
         return false;
-    }*/
+    }
 }

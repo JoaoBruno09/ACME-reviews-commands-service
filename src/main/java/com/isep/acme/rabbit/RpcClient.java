@@ -14,12 +14,14 @@ import com.isep.acme.repositories.ProductRepository;
 import com.isep.acme.repositories.ReviewRepository;
 import com.isep.acme.repositories.UserRepository;
 import com.isep.acme.repositories.VoteRepository;
+import com.isep.acme.services.impl.ReviewServiceImpl;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
@@ -40,10 +42,16 @@ public class RpcClient {
     @Autowired
     UserRepository uRepository;
 
+    @Autowired
+    ReviewServiceImpl reviewService;
+
     private static final VoteMapper VOTE_MAPPER = VoteMapper.INSTANCE;
     public RpcClient(){
 
     }
+
+
+
     public void getProducts() throws Exception {
         String correlationId = UUID.randomUUID().toString();
 
@@ -98,6 +106,7 @@ public class RpcClient {
             System.out.println("Review added to database");
         }
     }
+
     public void getVotes() throws Exception{
         String correlationId = UUID.randomUUID().toString();
 
@@ -121,8 +130,13 @@ public class RpcClient {
             Optional<Review> review = reviewRepository.findByRID(voteReviewDTO.getRID());
             if (!review.isEmpty()){
                 Vote vote = VOTE_MAPPER.toVote(voteReviewDTO);
-                if (vote.getVote().equalsIgnoreCase("upVote") && review.get().addUpVote(vote)
-                        || vote.getVote().equalsIgnoreCase("downVote") && review.get().addDownVote(vote)) {
+                if (vote.getVote().equalsIgnoreCase("upVote")){
+                    reviewService.addVoteToReview(voteReviewDTO.getVoteID(),voteReviewDTO);
+                    voteRepository.save(vote);
+                    reviewRepository.save(review.get());
+                    System.out.println("Vote Added " + vote);
+                } else if(vote.getVote().equalsIgnoreCase("downVote")){
+                    review.get().addDownVote(vote);
                     voteRepository.save(vote);
                     reviewRepository.save(review.get());
                     System.out.println("Vote Added " + vote);
