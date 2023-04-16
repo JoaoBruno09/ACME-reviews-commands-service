@@ -9,8 +9,10 @@ import com.isep.acme.model.dtos.CreateReviewDTO;
 import com.isep.acme.model.dtos.ReviewDTO;
 import com.isep.acme.model.dtos.VoteReviewDTO;
 import com.isep.acme.model.mappers.ReviewMapper;
+import com.isep.acme.model.mappers.VoteMapper;
 import com.isep.acme.repositories.ProductRepository;
 import com.isep.acme.repositories.ReviewRepository;
+import com.isep.acme.repositories.VoteRepository;
 import com.isep.acme.services.RestService;
 import com.isep.acme.services.ReviewService;
 import com.isep.acme.services.UserService;
@@ -30,12 +32,17 @@ public class ReviewServiceImpl implements ReviewService {
     ReviewRepository repository;
     @Autowired
     ProductRepository pRepository;
+
+    @Autowired
+    VoteRepository voteRepository;
     @Autowired
     UserService userService;
     @Autowired
     RestService restService;
     @Autowired
     RabbitTemplate rabbitTemplate;
+
+    private static final VoteMapper VOTE_MAPPER = VoteMapper.INSTANCE;
 
     @Override
     public ReviewDTO create(final CreateReviewDTO createReviewDTO, String sku) {
@@ -89,27 +96,20 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Transactional
     @Override
-    public boolean addVoteToReview(Long reviewID, VoteReviewDTO voteReviewDTO) {
+    public boolean addVoteToReview(VoteReviewDTO voteReviewDTO, Vote vote) {
 
-        Optional<Review> review = this.repository.findById(reviewID);
+        Optional<Review> review = this.repository.findByRID(voteReviewDTO.getRID());
 
         if (review.isEmpty()) return false;
 
-        Vote vote = new Vote(voteReviewDTO.getVote(), voteReviewDTO.getUserID());
-        if (voteReviewDTO.getVote().equalsIgnoreCase("upVote")) {
-            boolean added = review.get().addUpVote(vote);
+        if (voteReviewDTO.getVote().equalsIgnoreCase("upVote") && review.get().addUpVote(vote)
+                || voteReviewDTO.getVote().equalsIgnoreCase("downVote") && review.get().addDownVote(vote)) {
 
-            if (added) {
-                Review reviewUpdated = this.repository.save(review.get());
-                return reviewUpdated != null;
-            }
-        } else if (voteReviewDTO.getVote().equalsIgnoreCase("downVote")) {
-            boolean added = review.get().addDownVote(vote);
-            if (added) {
-                Review reviewUpdated = this.repository.save(review.get());
-                return reviewUpdated != null;
-            }
+            repository.save(review.get());
+            return true;
+
         }
         return false;
     }
+
 }

@@ -14,6 +14,7 @@ import com.isep.acme.repositories.ProductRepository;
 import com.isep.acme.repositories.ReviewRepository;
 import com.isep.acme.repositories.UserRepository;
 import com.isep.acme.repositories.VoteRepository;
+import com.isep.acme.services.ReviewService;
 import com.isep.acme.services.impl.ReviewServiceImpl;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageProperties;
@@ -43,7 +44,7 @@ public class RpcClient {
     UserRepository uRepository;
 
     @Autowired
-    ReviewServiceImpl reviewService;
+    ReviewService reviewService;
 
     private static final VoteMapper VOTE_MAPPER = VoteMapper.INSTANCE;
     public RpcClient(){
@@ -127,23 +128,12 @@ public class RpcClient {
             System.out.println(votesList.get(i));
             VoteReviewDTO voteReviewDTO = objectMapper.convertValue(votesList.get(i), VoteReviewDTO.class);
             System.out.println("Review RID " + voteReviewDTO.getVID());
-            Optional<Review> review = reviewRepository.findByRID(voteReviewDTO.getRID());
-            if (!review.isEmpty()){
-                Vote vote = VOTE_MAPPER.toVote(voteReviewDTO);
-                if (vote.getVote().equalsIgnoreCase("upVote")){
-                    reviewService.addVoteToReview(voteReviewDTO.getVoteID(),voteReviewDTO);
-                    voteRepository.save(vote);
-                    reviewRepository.save(review.get());
-                    System.out.println("Vote Added " + vote);
-                } else if(vote.getVote().equalsIgnoreCase("downVote")){
-                    review.get().addDownVote(vote);
-                    voteRepository.save(vote);
-                    reviewRepository.save(review.get());
-                    System.out.println("Vote Added " + vote);
-                }
+            Vote vote = VOTE_MAPPER.toVote(voteReviewDTO);
+            Vote vote2 = voteRepository.save(vote);
+            if (reviewService.addVoteToReview(voteReviewDTO, vote2)) {
+                System.out.println("Vote Added ");
             }
         }
-
     }
     private Review getProductAndUserForReview(ReviewDTO reviewDTO){
         final Optional<Product> product = productRepository.findBySku(reviewDTO.getProductSku());

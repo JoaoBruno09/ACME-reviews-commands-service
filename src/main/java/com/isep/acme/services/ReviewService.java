@@ -1,5 +1,6 @@
 package com.isep.acme.services;
 
+import com.isep.acme.model.Vote;
 import com.isep.acme.model.dtos.CreateReviewDTO;
 import com.isep.acme.model.dtos.ReviewDTO;
 import com.isep.acme.model.dtos.VoteReviewDTO;
@@ -16,5 +17,5 @@ public interface ReviewService {
     MessagePostProcessor createMessageProcessor(String header);
 
     @Transactional
-    boolean addVoteToReview(Long reviewID, VoteReviewDTO voteReviewDTO);
+    boolean addVoteToReview(VoteReviewDTO voteReviewDTO, Vote vote);
 }
