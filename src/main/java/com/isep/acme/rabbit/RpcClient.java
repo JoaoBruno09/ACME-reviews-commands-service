@@ -107,7 +107,7 @@ public class RpcClient {
 
         String message = "getVotes";
         Message requestMessage = new Message(message.getBytes(), props);
-        ArrayList<VoteReviewDTO> votesList = (ArrayList<VoteReviewDTO>) rabbitTemplate.convertSendAndReceive("rpc_votes_queue", requestMessage);
+        ArrayList<VoteReviewDTO> votesList = (ArrayList<VoteReviewDTO>) rabbitTemplate.convertSendAndReceive("rpc_reviews_queue", requestMessage);
 
 
         System.out.println(votesList);
